@@ -1,0 +1,52 @@
+{
+	"name": "DimSalesReason",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SalesDataMart",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DataMart"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SalesReasonKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SalesReasonID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SalesReasonName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ReasonType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ValidFrom",
+				"type": "date"
+			},
+			{
+				"name": "ValidTo",
+				"type": "date"
+			},
+			{
+				"name": "isActive",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimSalesReason"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,43 @@
+{
+	"name": "ProductCateFromDM",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SalesDataMart",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Source"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ProductCategoryKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProductCategoryID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CategoryName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ValidFrom",
+				"type": "date"
+			},
+			{
+				"name": "ValidTo",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimCategory"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

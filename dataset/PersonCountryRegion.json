@@ -1,0 +1,35 @@
+{
+	"name": "PersonCountryRegion",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SalesAventureWorks2019",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Source"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CountryRegionCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ModifiedDate",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "Person",
+			"table": "CountryRegion"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

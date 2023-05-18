@@ -1,0 +1,148 @@
+{
+	"name": "DimProduct",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Product",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "DimSubCategory",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimProduct",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "lookup1"
+				},
+				{
+					"name": "surrogateKey1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ProductID as integer,",
+				"          Name as string,",
+				"          ProductNumber as string,",
+				"          MakeFlag as boolean,",
+				"          FinishedGoodsFlag as boolean,",
+				"          Color as string,",
+				"          SafetyStockLevel as integer,",
+				"          ReorderPoint as integer,",
+				"          StandardCost as decimal(19,4),",
+				"          ListPrice as decimal(19,4),",
+				"          Size as string,",
+				"          SizeUnitMeasureCode as string,",
+				"          WeightUnitMeasureCode as string,",
+				"          Weight as decimal(8,2),",
+				"          DaysToManufacture as integer,",
+				"          ProductLine as string,",
+				"          Class as string,",
+				"          Style as string,",
+				"          ProductSubcategoryID as integer,",
+				"          ProductModelID as integer,",
+				"          SellStartDate as timestamp,",
+				"          SellEndDate as timestamp,",
+				"          DiscontinuedDate as timestamp,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source(output(",
+				"          ProductSubcategoryKey as integer,",
+				"          ProductCategoryKey as integer,",
+				"          ProductSubcategoryID as integer,",
+				"          ProductSubCategoryName as string,",
+				"          ValidFrom as date,",
+				"          ValidTo as date,",
+				"          isActive as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source2",
+				"source1 derive(isActive = 1,",
+				"          ValidFrom = currentDate(),",
+				"          ValidTo = addMonths(currentDate(),120)) ~> derivedColumn1",
+				"surrogateKey1, source2 lookup(source1@ProductSubcategoryID == source2@ProductSubcategoryID,",
+				"     multiple: false,",
+				"     pickup: 'any',",
+				"     broadcast: 'auto')~> lookup1",
+				"derivedColumn1 keyGenerate(output(ProductKey as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"lookup1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ProductKey as integer,",
+				"          ProductSubcategoryKey as integer,",
+				"          ProductID as integer,",
+				"          ProductName as string,",
+				"          Color as string,",
+				"          Size as string,",
+				"          Weight as decimal(8,2),",
+				"          ProductLine as string,",
+				"          Class as string,",
+				"          Style as string,",
+				"          ListPrice as decimal(19,4),",
+				"          SellStartDate as timestamp,",
+				"          SellEndDate as timestamp,",
+				"          ValidFrom as date,",
+				"          ValidTo as date,",
+				"          isActive as integer,",
+				"          StandardCost as decimal(18,0)",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          ProductKey,",
+				"          ProductSubcategoryKey,",
+				"          ProductID,",
+				"          ProductName = Name,",
+				"          Color,",
+				"          Size,",
+				"          Weight,",
+				"          ProductLine,",
+				"          Class,",
+				"          Style,",
+				"          StandardCost,",
+				"          ListPrice,",
+				"          SellStartDate,",
+				"          SellEndDate,",
+				"          ValidFrom = derivedColumn1@ValidFrom,",
+				"          ValidTo = derivedColumn1@ValidTo,",
+				"          isActive = derivedColumn1@isActive",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

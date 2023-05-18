@@ -1,0 +1,118 @@
+{
+	"name": "FactSales",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SalesDataMart",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DataMart"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SalesOrderID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProductKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PromotionKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CustomerKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SalesReasonKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TerritoryKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DateKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "OnlineOrderFlag",
+				"type": "bit"
+			},
+			{
+				"name": "OrderQty",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "UnitPrice",
+				"type": "decimal",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "UnitPriceDiscount",
+				"type": "decimal",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "LineTotal",
+				"type": "decimal",
+				"precision": 38,
+				"scale": 6
+			},
+			{
+				"name": "TaxAmtTotalOrder",
+				"type": "decimal",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "FreightTotalOrder",
+				"type": "decimal",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "OrderDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "DueDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "ShipDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "ValidFrom",
+				"type": "date"
+			},
+			{
+				"name": "ValidTo",
+				"type": "date"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "FactSales"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

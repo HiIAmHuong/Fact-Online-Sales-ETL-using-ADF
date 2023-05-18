@@ -1,0 +1,87 @@
+{
+	"name": "DimPromotion",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SalesPromotion",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimPromotion",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "surrogateKey1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          SpecialOfferID as integer,",
+				"          Description as string,",
+				"          DiscountPct as decimal(19,4),",
+				"          Type as string,",
+				"          Category as string,",
+				"          StartDate as timestamp,",
+				"          EndDate as timestamp,",
+				"          MinQty as integer,",
+				"          MaxQty as integer,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source1 keyGenerate(output(PromotionKey as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          PromotionKey as integer,",
+				"          PromotionID as integer,",
+				"          PromotionName as string,",
+				"          DiscountPct as decimal(19,4),",
+				"          Type as string,",
+				"          Category as string,",
+				"          StartDate as timestamp,",
+				"          EndDate as timestamp,",
+				"          MinQty as integer,",
+				"          MaxQty as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          PromotionKey,",
+				"          PromotionID = SpecialOfferID,",
+				"          PromotionName = Description,",
+				"          DiscountPct,",
+				"          Type,",
+				"          Category,",
+				"          StartDate,",
+				"          EndDate,",
+				"          MinQty,",
+				"          MaxQty",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

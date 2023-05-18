@@ -1,0 +1,45 @@
+{
+	"name": "ProductSubCategory",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SalesAventureWorks2019",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Source"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ProductSubcategoryID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProductCategoryID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "rowguid",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "ModifiedDate",
+				"type": "smalldatetime",
+				"precision": 16,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "Production",
+			"table": "ProductSubcategory"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

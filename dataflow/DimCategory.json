@@ -1,0 +1,97 @@
+{
+	"name": "DimCategory",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ProductCategory",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "DimCategory",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimCategory",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "surrogateKey1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ProductCategoryID as integer,",
+				"          Name as string,",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source(output(",
+				"          ProductCategoryKey as integer,",
+				"          ProductCategoryID as integer,",
+				"          CategoryName as string,",
+				"          ValidFrom as date,",
+				"          ValidTo as date,",
+				"          isActive as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source2",
+				"surrogateKey1 derive(isActive = 1,",
+				"          ValidFrom = currentDate(),",
+				"          ValidTo = addMonths(currentDate(),120)) ~> derivedColumn1",
+				"source1 keyGenerate(output(ProductCategoryKey as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ProductCategoryKey as integer,",
+				"          ProductCategoryID as integer,",
+				"          CategoryName as string,",
+				"          ValidFrom as date,",
+				"          ValidTo as date,",
+				"          isActive as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          ProductCategoryKey,",
+				"          ProductCategoryID,",
+				"          CategoryName = Name,",
+				"          isActive,",
+				"          ValidFrom,",
+				"          ValidTo",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}

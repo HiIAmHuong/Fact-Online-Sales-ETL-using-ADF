@@ -1,0 +1,60 @@
+{
+	"name": "DimTerritory",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SalesDataMart",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DataMart"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "TerritoryKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TerritoryID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CountryRegionCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TerritoryName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CountryRegionName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Group",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ValidFrom",
+				"type": "date"
+			},
+			{
+				"name": "ValidTo",
+				"type": "date"
+			},
+			{
+				"name": "isActive",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimTerritory"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

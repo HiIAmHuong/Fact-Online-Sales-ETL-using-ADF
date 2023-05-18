@@ -1,0 +1,9 @@
+{
+	"name": "ETLSALES",
+	"location": "eastasia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "fbc15019-b3e0-42c8-a2eb-eb8818754262",
+		"tenantId": "07acb355-56bc-489b-b98c-8fea440460e8"
+	}
+}

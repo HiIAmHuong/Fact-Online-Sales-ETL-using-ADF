@@ -1,0 +1,36 @@
+{
+	"name": "DimTime",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "SalesDataMart",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "-- Delete time dimension if it already exists.\nIF Exists(Select Name from sysobjects where name = 'DimTime')\nBEGIN\n    Drop Table DimTime\nEND\n\n\n-- Standard options for creating tables\nSET ANSI_NULLS ON\n\n\nSET QUOTED_IDENTIFIER ON\n\n\n-- Create your dimension table\n-- Adjust to your own needs\nCreate Table dbo.DimTime\n(\n    DateKey int PRIMARY KEY CLUSTERED,\n    Date datetime,\n    DateString varchar(10),\n    Day int,\n    DayofYear int,\n    DayofWeek int,\n    DayofWeekName varchar(10),\n    Week int,\n    Month int,\n    MonthName varchar(10),\n    Quarter int,\n    Year int,\n    IsWeekend bit,\n    IsLeapYear bit\n)\n\n-- Declare and set variables for loop\nDeclare\n@StartDate datetime,\n@EndDate datetime,\n@Date datetime\n\nSet @StartDate = '2000/01/01'\nSet @EndDate = '2040/12/31'\nSet @Date = @StartDate\n\n-- Loop through dates\nWHILE @Date <=@EndDate\nBEGIN\n    -- Check for leap year\n    DECLARE @IsLeapYear BIT\n    IF ((Year(@Date) % 4 = 0) AND (Year(@Date) % 100 != 0 OR Year(@Date) % 400 = 0))\n    BEGIN\n        SELECT @IsLeapYear = 1\n    END\n    ELSE\n    BEGIN\n        SELECT @IsLeapYear = 0\n    END\n\n    -- Check for weekend\n    DECLARE @IsWeekend BIT\n    IF (DATEPART(dw, @Date) = 1 OR DATEPART(dw, @Date) = 7)\n    BEGIN\n        SELECT @IsWeekend = 1\n    END\n    ELSE\n    BEGIN\n        SELECT @IsWeekend = 0\n    END\n\n    -- Insert record in dimension table\n    INSERT Into dbo.DimTime\n    (\n    [DateKey],\n    [Date],\n    [DateString],\n    [Day],\n    [DayofYear],\n    [DayofWeek],\n    [Dayofweekname],\n    [Week],\n    [Month],\n    [MonthName],\n    [Quarter],\n    [Year],\n    [IsWeekend],\n    [IsLeapYear]\n    )\n    Values\n    (\n    CONVERT(int, FORMAT(@Date, 'yyyyMMdd')),\n    @Date,\n    CONVERT(varchar(10), @Date, 105), -- See links for 105 explanation\n    Day(@Date),\n    DATEPART(dy, @Date),\n    DATEPART(dw, @Date),\n    DATENAME(dw, @Date),\n    DATEPART(wk, @Date),\n    DATEPART(mm, @Date),\n    DATENAME(mm, @Date),\n    DATENAME(qq, @Date),\n    Year(@Date),\n    @IsWeekend,\n    @IsLeapYear\n    )\n\n    -- Goto next day\n    Set @Date = @Date + 1\nEND\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-04-29T10:07:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

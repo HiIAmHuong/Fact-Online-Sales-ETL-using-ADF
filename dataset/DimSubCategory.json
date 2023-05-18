@@ -1,0 +1,53 @@
+{
+	"name": "DimSubCategory",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SalesDataMart",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DataMart"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "ProductSubcategoryKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProductCategoryKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProductSubcategoryID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProductSubCategoryName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ValidFrom",
+				"type": "date"
+			},
+			{
+				"name": "ValidTo",
+				"type": "date"
+			},
+			{
+				"name": "isActive",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DimSubCategory"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

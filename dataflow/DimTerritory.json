@@ -1,0 +1,143 @@
+{
+	"name": "DimTerritory",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SalesTerritory",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "PersonCountryRegion",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DimTerritory",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "sort1"
+				},
+				{
+					"name": "sort2"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TerritoryID as integer,",
+				"          Name as string,",
+				"          CountryRegionCode as string,",
+				"          Group as string,",
+				"          SalesYTD as decimal(19,4),",
+				"          SalesLastYear as decimal(19,4),",
+				"          CostYTD as decimal(19,4),",
+				"          CostLastYear as decimal(19,4),",
+				"          rowguid as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source(output(",
+				"          CountryRegionCode as string,",
+				"          Name as string,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source2",
+				"surrogateKey1 derive(isActive = 1,",
+				"          ValidFrom = currentDate(),",
+				"          ValidTo = addMonths(currentDate(),120)) ~> derivedColumn1",
+				"source2 sort(asc(CountryRegionCode, true)) ~> sort1",
+				"source1 sort(asc(CountryRegionCode, true)) ~> sort2",
+				"sort2, sort1 join(source1@CountryRegionCode == source2@CountryRegionCode,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"select1 keyGenerate(output(TerritoryKey as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"join1 select(mapColumn(",
+				"          TerritoryID,",
+				"          Name = source1@Name,",
+				"          CountryRegionName = source2@Name,",
+				"          CountryRegionCode = source1@CountryRegionCode,",
+				"          Group,",
+				"          SalesYTD,",
+				"          SalesLastYear,",
+				"          CostYTD,",
+				"          CostLastYear,",
+				"          rowguid,",
+				"          ModifiedDate = source1@ModifiedDate,",
+				"          CountryRegionCode = source2@CountryRegionCode,",
+				"          Name = source2@Name,",
+				"          ModifiedDate = source2@ModifiedDate",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          TerritoryKey as integer,",
+				"          TerritoryID as integer,",
+				"          CountryRegionCode as string,",
+				"          TerritoryName as string,",
+				"          CountryRegionName as string,",
+				"          Group as string,",
+				"          ValidFrom as date,",
+				"          ValidTo as date,",
+				"          isActive as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          TerritoryKey,",
+				"          TerritoryID,",
+				"          TerritoryName = Name,",
+				"          CountryRegionName,",
+				"          CountryRegionCode,",
+				"          Group,",
+				"          ValidFrom,",
+				"          ValidTo,",
+				"          isActive",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
